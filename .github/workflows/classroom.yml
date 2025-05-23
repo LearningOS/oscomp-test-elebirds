@@ -1,5 +1,10 @@
 name: Autograding Tests
 on: 
+  push:
+    branches:
+      - main 
+    # paths-ignore:
+    #   - '.github/**' 
   repository_dispatch:
     types: [autograde]
 env:
@@ -18,14 +23,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          repository: elebirds/oscamp-25sp-starry-next
-          ref: main
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly-2025-01-18
           components: rust-src, llvm-tools
           targets: x86_64-unknown-none, riscv64gc-unknown-none-elf, aarch64-unknown-none, aarch64-unknown-none-softfloat, loongarch64-unknown-none
+      - name: Checkout OS Source
+        uses: actions/checkout@v4
+        with:
+          repository: elebirds/oscamp-25sp-starry-next
+          ref: main
+          path: "os"
       - uses: Swatinem/rust-cache@v2
       - run: cargo install cargo-binutils
       - uses: ./.github/workflows/setup-musl
@@ -47,6 +55,8 @@ jobs:
         run: sudo apt-get install -y python3 python3-pip
       - name: build os.bin
         run: |
+          cd os
+          ./scripts/get_deps.sh
           touch riscv64_output.txt
           echo 'start---riscv64' > riscv64_output.txt
           touch loongarch64_output.txt
@@ -72,6 +82,8 @@ jobs:
           cat aarch64_output.txt >> output.txt
           cat x86_64_output.txt >> output.txt
           cat output.txt
+          cp output.txt ../
+          cd ..
           
       - name: Download EvaluationScript
         run: |
