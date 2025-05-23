@@ -1,10 +1,7 @@
 name: Autograding Tests
 on: 
-  push:
-    branches:
-      - main 
-    # paths-ignore:
-    #   - '.github/**' 
+  repository_dispatch:
+    types: [autograde]
 env:
   IMG_URL_riscv64: https://github.com/Azure-stars/testsuits-for-oskernel/releases/download/v0.1/sdcard-riscv64.img.gz # 镜像url
   IMG_URL_loongarch64: https://github.com/Azure-stars/testsuits-for-oskernel/releases/download/v0.1/sdcard-loongarch64.img.gz # 镜像url
@@ -21,6 +18,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          repository: elebirds/oscamp-25sp-starry-next
+          ref: main
+          token: ${{ secrets.OSCAMP_25SP_PROJ1_STARRY_NEXT_AUTOGRADE }}
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly-2025-01-18
