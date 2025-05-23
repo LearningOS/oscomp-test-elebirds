@@ -21,7 +21,6 @@ jobs:
         with:
           repository: elebirds/oscamp-25sp-starry-next
           ref: main
-          token: ${{ secrets.OSCAMP_25SP_PROJ1_STARRY_NEXT_AUTOGRADE }}
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly-2025-01-18
